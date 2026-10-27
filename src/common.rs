@@ -1261,7 +1261,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    String::new()
+    "https://kpcsupport.kaputterpc.de".to_owned()
 }
 
 #[inline]
