@@ -3817,9 +3817,9 @@ class _LogoState extends State<_Logo> {
               InkWell(
                 onTap: () => launchUrl(Uri.parse('https://kaputterpc.de')),
                 child: Text(
-                  'kaputterpc.de',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      decoration: TextDecoration.underline),
+                  'KaputterPC IT-Service\n089 / 69370977\nwww.kaputterpc.de',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ).marginOnly(top: 4),
             ],
