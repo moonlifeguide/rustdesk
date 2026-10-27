@@ -3807,9 +3807,22 @@ class _LogoState extends State<_Logo> {
               return Container();
             },
           );
-          return Container(
-            constraints: BoxConstraints(maxWidth: 300, maxHeight: 60),
-            child: image,
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                constraints: BoxConstraints(maxWidth: 300, maxHeight: 60),
+                child: image,
+              ),
+              InkWell(
+                onTap: () => launchUrl(Uri.parse('https://kaputterpc.de')),
+                child: Text(
+                  'kaputterpc.de',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      decoration: TextDecoration.underline),
+                ),
+              ).marginOnly(top: 4),
+            ],
           ).marginOnly(left: 12, right: 12, top: 12);
         }
         return const Offstage();
