@@ -696,9 +696,64 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     );
   }
 
+  // KPC: Name statt Rechnername an den Techniker melden (preset-device-name)
+  static const _kAskedCustomerName = 'kpc-customer-name-asked';
+
+  void _askCustomerNameOnce() {
+    if (bind.mainGetLocalOption(key: _kAskedCustomerName) == 'Y') return;
+    if (bind.mainGetOptionSync(key: 'preset-device-name').isNotEmpty) return;
+    final controller = TextEditingController();
+    gFFI.dialogManager.show((setState, close, context) {
+      Future<void> later() async {
+        await bind.mainSetLocalOption(key: _kAskedCustomerName, value: 'Y');
+        close();
+      }
+
+      Future<void> save() async {
+        final name = controller.text.trim();
+        if (name.isNotEmpty) {
+          await bind.mainSetOption(key: 'preset-device-name', value: name);
+        }
+        await later();
+      }
+
+      return CustomAlertDialog(
+        title: const Text('Willkommen bei KaputterPC'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+                'Bitte geben Sie Ihren Namen oder Firmennamen ein, damit wir Ihren Computer zuordnen können.'),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              maxLength: 60,
+              decoration: const InputDecoration(
+                hintText: 'z. B. Max Mustermann oder Musterfirma GmbH',
+              ),
+              onSubmitted: (_) => save(),
+            ),
+          ],
+        ),
+        actions: [
+          dialogButton('Später', onPressed: later, isOutline: true),
+          dialogButton('Speichern', onPressed: save),
+        ],
+        onSubmit: save,
+        onCancel: later,
+      );
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    // KPC: Beim ersten Start den Kundennamen abfragen
+    Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) _askCustomerNameOnce();
+    });
     _updateTimer = periodic_immediate(const Duration(seconds: 1), () async {
       await gFFI.serverModel.fetchID();
       final error = await bind.mainGetError();
